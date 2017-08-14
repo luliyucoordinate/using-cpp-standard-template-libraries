@@ -21,8 +21,9 @@ Cards create_card()
 {
 	Cards cards;
 	string colours[]{"heart", "club", "diamond", "spade"};
-	string numbers[]{ "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" };
-	
+	//要注意这里的问题，10的字符串是小于2的，这里最简单的做法是将10转为一个小于J的字符代替
+	string numbers[]{ "2", "3", "4", "5", "6", "7", "8", "9", "I", "J", "Q", "K", "A" };
+	//size_t numbers[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, }
 	for (const auto& first : colours)
 	{
 		for (const auto& second : numbers)

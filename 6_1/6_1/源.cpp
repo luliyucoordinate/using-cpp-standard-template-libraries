@@ -21,7 +21,7 @@ Cards create_card()
 {
 	Cards cards;
 	string colours[]{ "heart", "club", "diamond", "spade" };
-	string numbers[]{ "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" };
+	string numbers[]{ "2", "3", "4", "5", "6", "7", "8", "9", "I", "J", "Q", "K", "A" };
 
 	for (const auto& first : colours)
 	{
