@@ -17,16 +17,16 @@ using std::string;
 enum class Suit : size_t { Clubs, Diamonds, Hearts, Spades };
 enum class Face : size_t { Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace };
 using Card = std::pair<Suit, Face>;                       // The type of a card
-using Hand = std::vector<Card>;                            // Type for a hand of cards
-using Deck = std::vector<Card>;                            // Type for a deck of cards
-using Hands = std::vector<Hand>;                         // Type for a container of hands
+using Hand = std::vector<Card>;                           // Type for a hand of cards
+using Deck = std::vector<Card>;                           // Type for a deck of cards
+using Hands = std::vector<Hand>;                          // Type for a container of hands
 using Range = std::uniform_int_distribution<size_t>::param_type;
 
 // Stream insertion operator for a Card object 相当于没有在类里面封装输出函数
 std::ostream& operator<<(std::ostream& out, const Card& card)
 {
 	static std::array<string, 4> suits{ "C", "D", "H", "S" };           // Suit names
-	static std::array<string, 13> values{ "2", "3", "4", "5", "6",     // Face value names
+	static std::array<string, 13> values{ "2", "3", "4", "5", "6",      // Face value names
 		"7", "8", "9", "10", "J", "Q", "K", "A" };
 	string suit{ suits[static_cast<size_t>(card.first)] };
 	string value{ values[static_cast<size_t>(card.second)] };
@@ -85,20 +85,39 @@ void deal(Hands& hands, Deck& deck)
 void sort_hands(Hands& hands)
 {
 	for (auto&& hand : hands)
-		std::sort(std::begin(hand), std::end(hand), [](const auto& crd1, const auto crd2) { return crd1.first < crd2.first ||
+		std::sort(std::begin(hand), std::end(hand), [](const auto& crd1, const auto& crd2) { return crd1.first < crd2.first ||
 		(crd1.first == crd2.first && crd1.second < crd2.second); });
 	//hand.sort([](const auto& crd1, const auto crd2) { return crd1.first < crd2.first ||
 	//(crd1.first == crd2.first && crd1.second < crd2.second); });
 }
 
 // Output all hands one by one
-void show_hands(const Hands& hands)
+void show_hands(Hands& hands, Deck& deck)
 {
-	for (auto&& hand : hands)
+	auto d = dist();
+	//每个人输出一个牌，最后全部放在deck中
+	while (deck.size() != 52)
 	{
-		std::copy(std::begin(hand), std::end(hand), std::ostream_iterator<Card> {std::cout, " "});
-		std::cout << std::endl;
-	}
+		std::vector<Card> tempHand;
+		Card maxCard{};
+	
+		for (auto& iter = std::begin(hands); iter < std::end(hands); ++iter)
+		{
+			size_t max_index = (*iter).size() - 1;
+			d.param(Range{ 0, max_index });
+			auto tIter = std::begin(*iter);
+			std::advance(tIter, d(rng()));
+			deck.push_back(*tIter);
+			tempHand.push_back(*tIter);
+			std::cout << *tIter << std::endl;
+			Card tempCard = *tIter;
+			maxCard = std::max(maxCard, tempCard, [](const auto& crd1, const auto& crd2) {
+				return crd1.first < crd2.first || (crd1.first == crd2.first && crd1.second < crd2.second);
+			});
+			(*iter).erase(tIter);			//注意的是erase是传入的指针变量
+		}
+		std::cout << "最大的牌是：" << maxCard << std::endl << std::endl;
+	}	
 }
 
 int main()
@@ -120,6 +139,6 @@ int main()
 	sort_hands(hands);
 
 	//show the hands
-	show_hands(hands);
+	show_hands(hands, deck);
 	system("pause");
 }
