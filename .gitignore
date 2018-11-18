@@ -51,6 +51,4 @@ Temporary Items
 .gitignore 
 
 # vs
-*/Debug
-*/*.sln
-*/*.db
+*/.vs*
